@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monk Mode</title>
+    <link rel="stylesheet" href="style.css">
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <nav>
+
+    </nav>
+
+    <main>
+        <div id="title">
+        <h1>Do or Die Tryin’</h1>
+        <hr>
+        </div>
+
+        <div id="content">
+        <h2>Codziennie:</h2>
+        <ul>
+            <li><input type="checkbox"> Medytacja</li>
+            <li><input type="checkbox"> Siłownia</li>
+            <li><input type="checkbox"> Refleksje</li>
+            <li><input type="checkbox"> Praca</li>
+            <li><input type="checkbox"><input type="text" id="customTaskInput" placeholder="???" oninput="adjustWidth(this)"></li>
+        </ul>
+        </div>
+        <div id="progress">0%</div><div id="congratulations">
+        <img src="./congratulations/congratulations1.jpg" id="img-congrats">
+    </div>
+    </main>
+
+    
+    
+
+    
+    <script>
+        function adjustWidth(input) {
+            input.style.width = input.scrollWidth + 'px';
+            // Zapisz tekst w localStorage po zmianie
+            localStorage.setItem('customTaskInput', input.value);
+        }
+
+        // Pobierz tekst z localStorage i ustaw wartość pola tekstowego
+        const customTaskInput = document.getElementById('customTaskInput');
+        customTaskInput.value = localStorage.getItem('customTaskInput') || '';
+
+        // Pobierz wszystkie checkboxy
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        // Pobierz elementy z progresem i gratulacjami
+        const progressText = document.getElementById('progress');
+        const congratulationsText = document.getElementById('congratulations');
+        const imgCongrats = document.getElementById('img-congrats');
+
+        // Funkcja do losowego wyboru obrazka
+        function getRandomImage() {
+            const images = [
+                'congratulations1.jpg',
+                'congratulations2.jpg',
+                'congratulations3.jpg',
+                // Dodaj więcej obrazków w razie potrzeby
+            ];
+
+            const randomIndex = Math.floor(Math.random() * images.length);
+            const randomImage = images[randomIndex];
+
+            return `./congratulations/${randomImage}`;
+        }
+
+        // Oblicz i wyświetl procent ukończenia
+        function updateProgress() {
+            const totalCheckboxes = checkboxes.length;
+            const checkedCheckboxes = [...checkboxes].filter(checkbox => checkbox.checked).length;
+            const percentComplete = (checkedCheckboxes / totalCheckboxes) * 100;
+
+            progressText.textContent = `${percentComplete.toFixed(0)}%`;
+
+            // Sprawdź, czy osiągnięto 100% ukończenia
+            if (percentComplete === 100) {
+                congratulationsText.style.opacity = '1';
+                // Ustaw losowy obrazek
+                imgCongrats.src = getRandomImage();
+            } else {
+                congratulationsText.style.opacity = '0';
+            }
+        }
+
+        // Dodaj nasłuchiwacze zdarzeń dla każdego checkboxa
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateProgress);
+        });
+
+        // Wywołaj funkcję aktualizacji progresu na start
+        updateProgress();
+    </script>
+</body>
+</html>
